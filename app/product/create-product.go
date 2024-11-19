@@ -12,15 +12,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type StructA struct {
-    FieldA string `form:"field_a"`
-}
-
-type StructC struct {
-    NestedStructPointer *StructA
-    FieldC string `form:"field_c"`
-}
-
 func CreateProduct(c *gin.Context) {
 	authHeader := c.GetHeader("Authorization")
 	if authHeader == "" {
@@ -44,7 +35,7 @@ func CreateProduct(c *gin.Context) {
 }
 
 func createProductProcess(user modelDatabase.User, c *gin.Context) (modelResponse.ProductResponse, error) {
-	var reqProduct modelRequest.ProductRequest
+	var reqProduct modelRequest.CreateProductRequest
     db := utils.SetDatabase()
 
 	if err := c.Bind(&reqProduct); err != nil {

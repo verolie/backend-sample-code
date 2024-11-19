@@ -39,6 +39,20 @@ func GetProduct(c *gin.Context) {
 func getProductProcess(user modelDatabase.User, c *gin.Context) (gin.H, error) {
 	db := utils.SetDatabase()
 
+	productId := c.DefaultQuery("product_id", "")
+
+	if productId != "" {
+		product, err := GetProductByID(db, productId)
+		if err != nil {
+			return nil, err
+		}
+
+		// Return the product data
+		return gin.H{
+			"product": product,
+		}, nil
+	}
+
 	// Pagination parameters
 	pageStr := c.DefaultQuery("page", "1")
 	pageSizeStr := c.DefaultQuery("pageSize", "10")
@@ -53,10 +67,8 @@ func getProductProcess(user modelDatabase.User, c *gin.Context) (gin.H, error) {
 		return nil, errors.New("invalid page size")
 	}
 
-	// Calculate the offset for pagination
 	offset := (page - 1) * pageSize
 
-	// Retrieve products from the database with pagination
 	var products []modelDatabase.StockProducts
 	if err := db.Limit(pageSize).Offset(offset).Find(&products).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
@@ -65,15 +77,13 @@ func getProductProcess(user modelDatabase.User, c *gin.Context) (gin.H, error) {
 		return nil, err
 	}
 
-	// Get the total count of products for pagination metadata
 	var totalProducts int64
 	if err := db.Model(&modelDatabase.StockProducts{}).Count(&totalProducts).Error; err != nil {
 		return nil, err
 	}
 
-	// Prepare the pagination response
 	result := gin.H{
-		"user": user.UserID, // Include user info in the response if needed
+		"user": user.UserID,
 		"products": products,
 		"pagination": gin.H{
 			"page":      page,
@@ -84,4 +94,17 @@ func getProductProcess(user modelDatabase.User, c *gin.Context) (gin.H, error) {
 	}
 
 	return result, nil
+}
+
+
+
+func GetProductByID(db *gorm.DB, productId string) (*modelDatabase.StockProducts, error) {
+	var product modelDatabase.StockProducts
+	if err := db.Where("stock_product_id = ?", productId).First(&product).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, errors.New("product not found")
+		}
+		return nil, err
+	}
+	return &product, nil
 }

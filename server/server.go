@@ -34,7 +34,7 @@ func registerServer(e *gin.Engine) {
 	// Stock product
 	e.GET("/stock-product", StockProductHandler)
 	e.POST("/stock-product", StockProductHandler)
-	e.PATCH("/stock-product/:id", usersHandlerParamStockProduct)
+	e.PUT("/stock-product/:id", usersHandlerParamStockProduct)
 	e.DELETE("/stock-product/:id", usersHandlerParamStockProduct)
 }
 
@@ -62,8 +62,8 @@ func StockProductHandler(c *gin.Context) {
 
 func usersHandlerParamStockProduct(c *gin.Context) {
 	switch c.Request.Method {
-	case http.MethodPatch:
-		product.PatchProduct(c)
+	case http.MethodPut:
+		product.PutProduct(c)
 	case http.MethodDelete:
 		product.DeleteProduct(c)
 	default:
