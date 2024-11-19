@@ -6,12 +6,12 @@ import (
 	"strconv"
 
 	"github.com/code-sample/model/modelDatabase"
+	"github.com/code-sample/model/modelResponse"
 	"github.com/code-sample/utils"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
-// GetProduct handles the retrieval of products with pagination
 func GetProduct(c *gin.Context) {
 	authHeader := c.GetHeader("Authorization")
 	if authHeader == "" {
@@ -19,7 +19,6 @@ func GetProduct(c *gin.Context) {
 		return
 	}
 
-	// Validate the token
 	user, err := utils.ValidateToken(authHeader)
 	if err != nil {
 		utils.ErrorMessage(c, "Invalid or missing token", err.Error(), http.StatusUnauthorized)
@@ -35,11 +34,12 @@ func GetProduct(c *gin.Context) {
 	utils.SuccessMessage(c, responseData, "Product data retrieved successfully")
 }
 
-// getProductProcess retrieves products from the database with pagination
-func getProductProcess(user modelDatabase.User, c *gin.Context) (gin.H, error) {
+func getProductProcess(user modelDatabase.User, c *gin.Context) (interface{}, error) {
 	db := utils.SetDatabase()
 
 	productId := c.DefaultQuery("product_id", "")
+	pageStr := c.DefaultQuery("page", "1")
+	pageSizeStr := c.DefaultQuery("pageSize", "10")
 
 	if productId != "" {
 		product, err := GetProductByID(db, productId)
@@ -47,15 +47,19 @@ func getProductProcess(user modelDatabase.User, c *gin.Context) (gin.H, error) {
 			return nil, err
 		}
 
-		// Return the product data
-		return gin.H{
-			"product": product,
-		}, nil
+		response := modelResponse.ProductResponse{
+		ProductID:   product.StockProductID,
+		ProductName: product.ProductName,
+		Quantity:    product.Quantity,
+		Status:      product.Status,
+		CreatedAt:   product.CreatedAt,
+		CreatedBy:   product.CreatedBy,
+		UpdatedAt:   product.UpdatedAt,
+		UpdatedBy:   product.UpdatedBy,
 	}
 
-	// Pagination parameters
-	pageStr := c.DefaultQuery("page", "1")
-	pageSizeStr := c.DefaultQuery("pageSize", "10")
+		return response, nil
+	}
 
 	page, err := strconv.Atoi(pageStr)
 	if err != nil || page < 1 {
@@ -82,18 +86,15 @@ func getProductProcess(user modelDatabase.User, c *gin.Context) (gin.H, error) {
 		return nil, err
 	}
 
-	result := gin.H{
-		"user": user.UserID,
-		"products": products,
-		"pagination": gin.H{
-			"page":      page,
-			"pageSize":  pageSize,
-			"total":     totalProducts,
-			"totalPage": (totalProducts + int64(pageSize) - 1) / int64(pageSize), // Calculate total pages
-		},
+	response := modelResponse.DetailGetResponse{
+		Detail:    products,
+		Page:      page,
+		PageSize:  pageSize,
+		Total:     int(totalProducts),
+		TotalPage: int((totalProducts + int64(pageSize) - 1) / int64(pageSize)), 
 	}
 
-	return result, nil
+	return response, nil
 }
 
 
