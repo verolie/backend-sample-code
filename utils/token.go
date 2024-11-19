@@ -11,7 +11,7 @@ import (
 
 var secretKey = []byte("secret-key")
 
-func ValidateToken(userId int) (string, error) {
+func ValidateLoginToken(userId int) (string, error) {
 	token, err := checkAvailableToken(userId)
 	if err != nil {
 		return "", err
@@ -31,13 +31,13 @@ func ValidateToken(userId int) (string, error) {
 func checkAvailableToken(userId int) (string, error) {
 	db := SetDatabase()
 
-	tokenString, err := getToken(userId, db)
+	tokenString, err := getTokenUser(userId, db)
 	if err != nil {
 		return "", err
 	}
 
 	if tokenString != "" {
-		if err := verifyToken(tokenString); err == nil {
+		if err := VerifyToken(tokenString); err == nil {
 			return tokenString, nil
 		}
 		err = deleteToken(userId, db)
@@ -49,7 +49,7 @@ func checkAvailableToken(userId int) (string, error) {
 	return "", nil
 }
 
-func getToken(userId int, db *gorm.DB) (string, error) {
+func getTokenUser(userId int, db *gorm.DB) (string, error) {
 	var data modelDatabase.Tokens
 
 	result := db.Where("user_token_id = ?", userId).Order("created_at desc").First(&data)
@@ -110,7 +110,7 @@ func deleteToken(userId int, db *gorm.DB) error {
 	return nil
 }
 
-func verifyToken(tokenString string) error {
+func VerifyToken(tokenString string) error {
 	// Parse and validate the token
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		return secretKey, nil

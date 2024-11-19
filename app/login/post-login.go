@@ -49,7 +49,7 @@ func loginEmail(username string, password string) (*modelDatabase.User, string, 
 		return nil, "", fmt.Errorf("incorrect password")
 	}
 
-	token, err := utils.ValidateToken(user.UserID)
+	token, err := utils.ValidateLoginToken(user.UserID)
 	if err != nil {
 		return nil, "", fmt.Errorf("failed to generate token: %v", err)
 	}

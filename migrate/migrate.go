@@ -40,8 +40,8 @@ type Tokens struct {
 type StockProducts struct {
 	StockProductID int       `gorm:"primaryKey;autoIncrement;notNull"`
 	ProductName    string
-	Quantity       string
-	Status         int       `gorm:"column:is_active"`
+	Quantity       int
+	Status         string       `gorm:"column:status"`
 	CreatedAt      time.Time `gorm:"column:created_at"`
 	CreatedBy      int       `gorm:"not null"`
 	UpdatedAt      time.Time `gorm:"column:updated_at"`
