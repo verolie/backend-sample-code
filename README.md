@@ -45,6 +45,7 @@ when you create a product the status should be draft or active
 GET http://localhost:8080/stock-product?product_id=1&page=1&pageSize=2
 ```
 This endpoint is used to get products. Below is an example of the request body
+you can remove product_id
 
 **Delete Product**
 ```
