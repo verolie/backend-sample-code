@@ -34,7 +34,7 @@ func CreateProduct(c *gin.Context) {
 	utils.SuccessMessage(c, responseData, "Product data created successfully")
 }
 
-func createProductProcess(user modelDatabase.User, c *gin.Context) (modelResponse.ProductResponse, error) {
+func createProductProcess(user modelDatabase.Users, c *gin.Context) (modelResponse.ProductResponse, error) {
 	var reqProduct modelRequest.CreateProductRequest
     db := utils.SetDatabase()
 
@@ -64,11 +64,10 @@ func createProductProcess(user modelDatabase.User, c *gin.Context) (modelRespons
             Quantity:    product.Quantity,
             Status:      product.Status,
             CreatedAt:   product.CreatedAt,
-            CreatedBy:   product.CreatedBy,
+            CreatedBy:   user.Username,
             UpdatedAt:   product.UpdatedAt,
-            UpdatedBy:   product.UpdatedBy,
+            UpdatedBy:   user.Username,
         }
-    
 
 	    return response, nil
     } else{

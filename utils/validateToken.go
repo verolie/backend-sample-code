@@ -9,7 +9,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func ValidateToken(token string) (modelDatabase.User, error) {
+func ValidateToken(token string) (modelDatabase.Users, error) {
 	db:= SetDatabase()
 	
 	if (strings.HasPrefix(token, "Bearer ")) {
@@ -17,25 +17,25 @@ func ValidateToken(token string) (modelDatabase.User, error) {
 	}
 	
 	if token == "" {
-		return modelDatabase.User{}, errors.New("token is null or undefined")
+		return modelDatabase.Users{}, errors.New("token is null or undefined")
 	}
 
 	userId, err := getToken(token, db)
 	if err != nil {
-		return modelDatabase.User{}, err
+		return modelDatabase.Users{}, err
 	}
 
 	if userId == 0 {
-		return modelDatabase.User{}, errors.New("invalid token")
+		return modelDatabase.Users{}, errors.New("invalid token")
 	}
 
-	var user modelDatabase.User
+	var user modelDatabase.Users
 	result := db.Where("user_id = ?", userId).First(&user)
 	if result.Error != nil {
 		if result.Error == gorm.ErrRecordNotFound {
-			return modelDatabase.User{}, errors.New("user not found")
+			return modelDatabase.Users{}, errors.New("user not found")
 		}
-		return modelDatabase.User{}, fmt.Errorf("error fetching user data: %v", result.Error)
+		return modelDatabase.Users{}, fmt.Errorf("error fetching user data: %v", result.Error)
 	}
 
 	return user, nil

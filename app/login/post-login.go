@@ -35,8 +35,8 @@ func PostLogin(c *gin.Context) {
 	}
 }
 
-func loginEmail(username string, password string) (*modelDatabase.User, string, error) {
-	user := modelDatabase.User{}
+func loginEmail(username string, password string) (*modelDatabase.Users, string, error) {
+	user := modelDatabase.Users{}
 	db := utils.SetDatabase()
 	err := db.Where("username = ?", username).First(&user).Error
 

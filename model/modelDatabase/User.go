@@ -2,7 +2,7 @@ package modelDatabase
 
 import "time"
 
-type User struct {
+type Users struct {
 	UserID 		int `gorm:"primary_key;auto_increment;not_null"`
 	Username    string
 	Password    string

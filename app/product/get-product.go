@@ -34,7 +34,7 @@ func GetProduct(c *gin.Context) {
 	utils.SuccessMessage(c, responseData, "Product data retrieved successfully")
 }
 
-func getProductProcess(user modelDatabase.User, c *gin.Context) (interface{}, error) {
+func getProductProcess(user modelDatabase.Users, c *gin.Context) (interface{}, error) {
 	db := utils.SetDatabase()
 
 	productId := c.DefaultQuery("product_id", "")
@@ -53,9 +53,9 @@ func getProductProcess(user modelDatabase.User, c *gin.Context) (interface{}, er
 		Quantity:    product.Quantity,
 		Status:      product.Status,
 		CreatedAt:   product.CreatedAt,
-		CreatedBy:   product.CreatedBy,
+		CreatedBy:   user.Username,
 		UpdatedAt:   product.UpdatedAt,
-		UpdatedBy:   product.UpdatedBy,
+		UpdatedBy:   user.Username,
 	}
 
 		return response, nil

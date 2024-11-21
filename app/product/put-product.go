@@ -35,7 +35,7 @@ func PutProduct(c *gin.Context) {
 	utils.SuccessMessage(c, responseData, "Product data updated successfully")
 }
 
-func putProductProcess(user modelDatabase.User, c *gin.Context) (modelResponse.ProductResponse, error) {
+func putProductProcess(user modelDatabase.Users, c *gin.Context) (modelResponse.ProductResponse, error) {
 	db := utils.SetDatabase()
 
 	productID := c.Param("id")
@@ -71,9 +71,9 @@ func putProductProcess(user modelDatabase.User, c *gin.Context) (modelResponse.P
 		Quantity:    updatedProduct.Quantity,
 		Status:      updatedProduct.Status,
 		CreatedAt:   updatedProduct.CreatedAt,
-		CreatedBy:   updatedProduct.CreatedBy,
+		CreatedBy:   user.Username,
 		UpdatedAt:   updatedProduct.UpdatedAt,
-		UpdatedBy:   updatedProduct.UpdatedBy,
+		UpdatedBy:   user.Username,
 	}
 
 	return response, nil
@@ -97,7 +97,7 @@ func validateStatus(status string) error {
 	return nil
 }
 
-func updateProduct(reqProduct modelRequest.CreateProductRequest, product modelDatabase.StockProducts, user modelDatabase.User, db *gorm.DB) (*modelDatabase.StockProducts, error) {
+func updateProduct(reqProduct modelRequest.CreateProductRequest, product modelDatabase.StockProducts, user modelDatabase.Users, db *gorm.DB) (*modelDatabase.StockProducts, error) {
 	if reqProduct.ProductName != "" {
 		product.ProductName = reqProduct.ProductName
 	}

@@ -5,6 +5,7 @@ import (
 
 	"github.com/code-sample/app/login"
 	"github.com/code-sample/app/product"
+	"github.com/gin-contrib/cors"
 
 	// "github.com/code-sample/migrate"
 	"github.com/gin-gonic/gin"
@@ -12,6 +13,14 @@ import (
 
 func RunServer() {
 	e := gin.Default()
+
+	e.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"http://localhost:3000"}, 
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Content-Type", "Authorization"},
+		AllowCredentials: true,
+	}))
+
 
 	// Initialize migrations
 	// migrate.Init()

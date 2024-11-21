@@ -33,7 +33,7 @@ func DeleteProduct(c *gin.Context) {
 	utils.SuccessMessage(c, responseData, "Product data deleted successfully")
 }
 
-func deleteProductProcess(user modelDatabase.User, c *gin.Context) (gin.H, error) {
+func deleteProductProcess(user modelDatabase.Users, c *gin.Context) (gin.H, error) {
 	db := utils.SetDatabase()
 
 	productID := c.Param("id")
