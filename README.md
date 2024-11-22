@@ -11,6 +11,8 @@ you can connect to the end point using [http://localhost:8080](http://localhost:
 
 for the database you can set in utils/database.go you have to have postgreSQL database first
 
+for the database migration you can uncomment `migrate.init` and `seed.SeedUsers()` at server.go
+
 ## API 
 There are several APIs available: delete, get, create, and edit product, as well as login.
 For the login endpoint, no Authorization is needed. For the other APIs, Authorization is required.
